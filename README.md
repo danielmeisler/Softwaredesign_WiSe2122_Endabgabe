@@ -1,1 +1,1 @@
-# Softwaredesign_WiSe2122_Endabgabe
+# Softwaredesign_Endabgabe
