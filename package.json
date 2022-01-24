@@ -1,0 +1,36 @@
+{
+  "name": "softwaredesign_wise2122_endabgabe",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "ts-node-dev --respawn --transpile-only ./src/index.ts",
+    "test": "jest",
+    "debug": "tsc"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/danielmeisler/Softwaredesign_WiSe2122_Endabgabe.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/danielmeisler/Softwaredesign_WiSe2122_Endabgabe/issues"
+  },
+  "homepage": "https://github.com/danielmeisler/Softwaredesign_WiSe2122_Endabgabe#readme",
+  "dependencies": {
+    "@types/jest": "^27.0.2",
+    "@types/node": "^16.11.7",
+    "jest": "^27.3.1",
+    "prompts": "^2.4.2",
+    "ts-jest": "^27.0.7",
+    "ts-loader": "^9.2.6",
+    "ts-node": "^10.4.0",
+    "ts-node-dev": "^1.1.8",
+    "typescript": "^4.4.4"
+  },
+  "devDependencies": {
+    "@types/node": "^17.0.10",
+    "@types/prompts": "^2.0.14"
+  }
+}
