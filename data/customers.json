@@ -1,0 +1,11 @@
+[
+  {
+    "id": "KNR123",
+    "last_name": "Mustermann",
+    "first_name": "Max",
+    "street_number_address": "Musterstraße 1",
+    "postal_code": 12345,
+    "city": "Musterstadt",
+    "discount_percentage": 5
+  }
+]

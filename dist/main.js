@@ -36,4 +36,4 @@ class Main {
 exports.Main = Main;
 let main = new Main();
 main.showProgramStatus();
-//# sourceMappingURL=index.js.map
+//# sourceMappingURL=main.js.map

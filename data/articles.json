@@ -1,0 +1,13 @@
+[
+  {
+    "id": "ABC123",
+    "description": "Kugelschreiber blau",
+    "launch_date": "01.01.2022",
+    "price_euro": 2.00,
+    "standard_delivery_time": 5,
+    "min_order_quantity": 50,
+    "max_order_quantity": 10000,
+    "discount_quantity": 5000,
+    "discount_percentage": 5
+  }
+]

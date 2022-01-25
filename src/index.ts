@@ -1,5 +1,5 @@
 import * as readline from "readline";
-import Console from "./classes/console";
+import Console from "./classes/singletons/Console";
 
 export class Main {
 
