@@ -7,6 +7,8 @@ export class Articles {
     
     constructor() {}
 
+    public articles: ArticleDAO[] = FileHandler.readArrayFile("./../../data/articles.json");
+
     public async showArticleOptions(): Promise<void> {
         Console.printLine("Article Page");
 
@@ -22,26 +24,31 @@ export class Articles {
 
     public async handleArticleAnswer(answer: number): Promise<void> {
 
-        let articles: ArticleDAO[] = await FileHandler.readArrayFile("./../../data/articles.json");
-
+        let articleArray: string[] = [];
 
         switch (answer) {
             case 1:
+
                 let articleSearch: Answers<string> = await Console.question("Search by ID or description", "text");
 
-                for (let i: number = 0; i < articles.length; i++) {
-                    if (articles[i].id.includes(articleSearch.value) || articles[i].description.includes(articleSearch.value)) {
-                        await Console.showOptions(["["+ articles[i].id.toString() + "] " + articles[i].description.toString()],"All found articles: ");
-                        this.handleSelectedArticle(articles[i]);
+                for (let i: number = 0; i < this.articles.length; i++) {
+                    if (this.articles[i].id.includes(articleSearch.value) || this.articles[i].description.includes(articleSearch.value)) {
+                        articleArray.push("["+ this.articles[i].id + "] " + this.articles[i].description);
                     }
                 }
+
+                let foundArticle: Answers<string> = await Console.showOptions(articleArray,"All found articles: ");
+                this.handleSelectedArticle(foundArticle.value - 1);
+
                 break;
             case 2:
 
-                for (let i: number = 0; i < articles.length; i++) {
-                    Console.printLine(i + " " + articles.length);
-                    await Console.showOptions(["["+ articles[i].id + "] " + articles[i].description],"All available articles: ");
+                for (let i: number = 0; i < this.articles.length; i++) {
+                    articleArray.push("["+ this.articles[i].id + "] " + this.articles[i].description);
                 }
+
+                let selectedArticle: Answers<string> = await Console.showOptions(articleArray,"All available articles: ");
+                this.handleSelectedArticle(selectedArticle.value - 1);
 
                 break;
             default:
@@ -50,17 +57,15 @@ export class Articles {
         }
     }
 
-    public async handleSelectedArticle(selectedArticle: ArticleDAO): Promise<void> {
-        Console.printLine("What do you want to do with [" + selectedArticle.id + "] " + selectedArticle.description + " ?");
-
-        let answer: Answers<string> = await Console.showOptions(
+    public async handleSelectedArticle(selectedArticle: number): Promise<void> {
+        await Console.showOptions(
             [
               "1. Edit article",
               "2. Show statistics",
               "3. Make an order"
             ],
-            "What do you want to do with the selected Article?");
+            "What do you want to do with [" + this.articles[selectedArticle].id + "] " + this.articles[selectedArticle].description + "?");
       
-          //this.handleSelectedArticleAnswer(answer.value);   
+          //this.handleSelectedArticleAnswer(answer.value);
     }
 }

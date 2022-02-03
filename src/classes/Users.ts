@@ -7,6 +7,8 @@ export class Users {
     
     constructor() {}
 
+    public users: UserDAO[] = FileHandler.readArrayFile("./../../data/users.json");
+
     public async showUserOptions(): Promise<void> {
         Console.printLine("User Page");
 
@@ -23,23 +25,32 @@ export class Users {
 
     public async handleUserAnswer(answer: number): Promise<void> {
 
-        let users: UserDAO[] = await FileHandler.readArrayFile("./../../data/users.json");
+        let userArray: string[] = [];
 
         switch (answer) {
             case 1:
+
                 let userSearch: Answers<string> = await Console.question("Search by username", "text");
 
-                for (let i: number = 0; i < users.length; i++) {
-                    if (users[i].username.includes(userSearch.value)) {
-                        await Console.showOptions([users[i].username.toString()],"All found users: ");
-                        this.handleSelectedUser(users[i]);
+                for (let i: number = 0; i < this.users.length; i++) {
+                    if (this.users[i].username.includes(userSearch.value)) {
+                        userArray.push(this.users[i].username.toString());
                     }
                 }
+
+                let foundUser: Answers<string> = await Console.showOptions(userArray,"All found users: ");
+                this.handleSelectedUser(foundUser.value - 1);
+
                 break;
             case 2:
 
+                for (let i: number = 0; i < this.users.length; i++) {
+                    userArray.push(this.users[i].username.toString());
+                }
 
-                    await Console.showOptions(["["+ users.toString() + "] " + users],"All available users: ");
+                let selectedUser: Answers<string> = await Console.showOptions(userArray,"All available users: ");
+                this.handleSelectedUser(selectedUser.value - 1);
+                
                 break;
             default:
                 Console.printLine("Option not available!");
@@ -47,8 +58,7 @@ export class Users {
         }
     }
 
-    public async handleSelectedUser(selectedUser: UserDAO): Promise<void> {
-        Console.printLine("What do you want to do with "+ selectedUser.username + " ?");
+    public async handleSelectedUser(selectedUser: number): Promise<void> {
 
         let answer: Answers<string> = await Console.showOptions(
             [
@@ -56,7 +66,7 @@ export class Users {
               "2. Edit password",
               "3. Edit admin rights"
             ],
-            "What do you want to do with the selected user?");
+            "What do you want to do with " + this.users[selectedUser].username + "?");
       
           //this.handleSelecteduserAnswer(answer.value);   
     }

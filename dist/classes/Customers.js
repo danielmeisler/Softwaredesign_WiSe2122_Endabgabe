@@ -16,7 +16,9 @@ exports.Customers = void 0;
 const Console_1 = __importDefault(require("./singletons/Console"));
 const FileHandler_1 = __importDefault(require("./singletons/FileHandler"));
 class Customers {
-    constructor() { }
+    constructor() {
+        this.customers = FileHandler_1.default.readArrayFile("./../../data/customers.json");
+    }
     showCustomerOptions() {
         return __awaiter(this, void 0, void 0, function* () {
             Console_1.default.printLine("Customer Page");
@@ -30,19 +32,24 @@ class Customers {
     }
     handleCustomerAnswer(answer) {
         return __awaiter(this, void 0, void 0, function* () {
-            let customers = yield FileHandler_1.default.readArrayFile("./../../data/customers.json");
+            let customerArray = [];
             switch (answer) {
                 case 1:
                     let customerSearch = yield Console_1.default.question("Search by ID or name", "text");
-                    for (let i = 0; i < customers.length; i++) {
-                        if (customers[i].id.includes(customerSearch.value) || customers[i].last_name.includes(customerSearch.value) || customers[i].first_name.includes(customerSearch.value)) {
-                            yield Console_1.default.showOptions(["[" + customers[i].id.toString() + "] " + customers[i].last_name.toString() + " " + customers[i].first_name.toString()], "All found customers: ");
-                            this.handleSelectedCustomer(customers[i]);
+                    for (let i = 0; i < this.customers.length; i++) {
+                        if (this.customers[i].id.includes(customerSearch.value) || this.customers[i].last_name.includes(customerSearch.value) || this.customers[i].first_name.includes(customerSearch.value)) {
+                            customerArray.push("[" + this.customers[i].id + "] " + this.customers[i].last_name + ", " + this.customers[i].first_name);
                         }
                     }
+                    let foundCustomer = yield Console_1.default.showOptions(customerArray, "All found customers: ");
+                    this.handleSelectedCustomer(foundCustomer.value - 1);
                     break;
                 case 2:
-                    yield Console_1.default.showOptions(["[" + customers.toString() + "] " + customers], "All available customers: ");
+                    for (let i = 0; i < this.customers.length; i++) {
+                        customerArray.push("[" + this.customers[i].id + "] " + this.customers[i].last_name + ", " + this.customers[i].first_name);
+                    }
+                    let selectedCustomer = yield Console_1.default.showOptions(customerArray, "All available customers: ");
+                    this.handleSelectedCustomer(selectedCustomer.value - 1);
                     break;
                 default:
                     Console_1.default.printLine("Option not available!");
@@ -52,12 +59,11 @@ class Customers {
     }
     handleSelectedCustomer(selectedCustomer) {
         return __awaiter(this, void 0, void 0, function* () {
-            Console_1.default.printLine("What do you want to do with [" + selectedCustomer.id + "] " + selectedCustomer.last_name + " " + selectedCustomer.first_name + " ?");
             let answer = yield Console_1.default.showOptions([
                 "1. Edit customer",
                 "2. Show statistics",
                 "3. Make an order"
-            ], "What do you want to do with the selected Customer?");
+            ], "What do you want to do with [" + this.customers[selectedCustomer].id + "] " + this.customers[selectedCustomer].last_name + ", " + this.customers[selectedCustomer].first_name + "?");
             //this.handleSelectedArticleAnswer(answer.value);   
         });
     }

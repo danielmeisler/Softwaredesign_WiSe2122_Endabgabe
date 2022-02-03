@@ -4,6 +4,14 @@
     "order_date": "25.01.2022",
     "delivery_date": "28.01.2022",
     "total": 50,
-    "customers": "KNR123"
+    "customer": { 
+      "id": "KNR123",
+      "last_name": "Mustermann",
+      "first_name": "Max",
+      "street_number_address": "Musterstraße 1",
+      "postal_code": 12345,
+      "city": "Musterstadt",
+      "discount_percentage": 5
+    }
   }
 ]

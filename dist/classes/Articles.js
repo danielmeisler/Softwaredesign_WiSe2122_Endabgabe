@@ -16,7 +16,9 @@ exports.Articles = void 0;
 const Console_1 = __importDefault(require("./singletons/Console"));
 const FileHandler_1 = __importDefault(require("./singletons/FileHandler"));
 class Articles {
-    constructor() { }
+    constructor() {
+        this.articles = FileHandler_1.default.readArrayFile("./../../data/articles.json");
+    }
     showArticleOptions() {
         return __awaiter(this, void 0, void 0, function* () {
             Console_1.default.printLine("Article Page");
@@ -29,22 +31,24 @@ class Articles {
     }
     handleArticleAnswer(answer) {
         return __awaiter(this, void 0, void 0, function* () {
-            let articles = yield FileHandler_1.default.readArrayFile("./../../data/articles.json");
+            let articleArray = [];
             switch (answer) {
                 case 1:
                     let articleSearch = yield Console_1.default.question("Search by ID or description", "text");
-                    for (let i = 0; i < articles.length; i++) {
-                        if (articles[i].id.includes(articleSearch.value) || articles[i].description.includes(articleSearch.value)) {
-                            yield Console_1.default.showOptions(["[" + articles[i].id.toString() + "] " + articles[i].description.toString()], "All found articles: ");
-                            this.handleSelectedArticle(articles[i]);
+                    for (let i = 0; i < this.articles.length; i++) {
+                        if (this.articles[i].id.includes(articleSearch.value) || this.articles[i].description.includes(articleSearch.value)) {
+                            articleArray.push("[" + this.articles[i].id + "] " + this.articles[i].description);
                         }
                     }
+                    let foundArticle = yield Console_1.default.showOptions(articleArray, "All found articles: ");
+                    this.handleSelectedArticle(foundArticle.value - 1);
                     break;
                 case 2:
-                    for (let i = 0; i < articles.length; i++) {
-                        Console_1.default.printLine(i + " " + articles.length);
-                        yield Console_1.default.showOptions(["[" + articles[i].id + "] " + articles[i].description], "All available articles: ");
+                    for (let i = 0; i < this.articles.length; i++) {
+                        articleArray.push("[" + this.articles[i].id + "] " + this.articles[i].description);
                     }
+                    let selectedArticle = yield Console_1.default.showOptions(articleArray, "All available articles: ");
+                    this.handleSelectedArticle(selectedArticle.value - 1);
                     break;
                 default:
                     Console_1.default.printLine("Option not available!");
@@ -54,13 +58,12 @@ class Articles {
     }
     handleSelectedArticle(selectedArticle) {
         return __awaiter(this, void 0, void 0, function* () {
-            Console_1.default.printLine("What do you want to do with [" + selectedArticle.id + "] " + selectedArticle.description + " ?");
-            let answer = yield Console_1.default.showOptions([
+            yield Console_1.default.showOptions([
                 "1. Edit article",
                 "2. Show statistics",
                 "3. Make an order"
-            ], "What do you want to do with the selected Article?");
-            //this.handleSelectedArticleAnswer(answer.value);   
+            ], "What do you want to do with [" + this.articles[selectedArticle].id + "] " + this.articles[selectedArticle].description + "?");
+            //this.handleSelectedArticleAnswer(answer.value);
         });
     }
 }

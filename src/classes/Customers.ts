@@ -7,6 +7,8 @@ export class Customers {
     
     constructor() {}
 
+    public customers: CustomerDAO[] = FileHandler.readArrayFile("./../../data/customers.json");
+
     public async showCustomerOptions(): Promise<void> {
         Console.printLine("Customer Page");
 
@@ -23,23 +25,31 @@ export class Customers {
 
     public async handleCustomerAnswer(answer: number): Promise<void> {
 
-        let customers: CustomerDAO[] = await FileHandler.readArrayFile("./../../data/customers.json");
+        let customerArray: string[] = [];
 
         switch (answer) {
             case 1:
+
                 let customerSearch: Answers<string> = await Console.question("Search by ID or name", "text");
 
-                for (let i: number = 0; i < customers.length; i++) {
-                    if (customers[i].id.includes(customerSearch.value) || customers[i].last_name.includes(customerSearch.value) || customers[i].first_name.includes(customerSearch.value)) {
-                        await Console.showOptions(["["+ customers[i].id.toString() + "] " + customers[i].last_name.toString() + " " + customers[i].first_name.toString()],"All found customers: ");
-                        this.handleSelectedCustomer(customers[i]);
+                for (let i: number = 0; i < this.customers.length; i++) {
+                    if (this.customers[i].id.includes(customerSearch.value) || this.customers[i].last_name.includes(customerSearch.value) || this.customers[i].first_name.includes(customerSearch.value)) {
+                        customerArray.push("["+ this.customers[i].id + "] " + this.customers[i].last_name + ", " + this.customers[i].first_name);
                     }
                 }
+
+                let foundCustomer: Answers<string> = await Console.showOptions(customerArray,"All found customers: ");
+                this.handleSelectedCustomer(foundCustomer.value - 1);
+
                 break;
             case 2:
 
+                for (let i: number = 0; i < this.customers.length; i++) {
+                    customerArray.push("["+ this.customers[i].id + "] " + this.customers[i].last_name + ", " + this.customers[i].first_name);
+                }
 
-                    await Console.showOptions(["["+ customers.toString() + "] " + customers],"All available customers: ");
+                let selectedCustomer: Answers<string> = await Console.showOptions(customerArray,"All available customers: ");
+                this.handleSelectedCustomer(selectedCustomer.value - 1);
                 break;
             default:
                 Console.printLine("Option not available!");
@@ -47,8 +57,7 @@ export class Customers {
         }
     }
 
-    public async handleSelectedCustomer(selectedCustomer: CustomerDAO): Promise<void> {
-        Console.printLine("What do you want to do with [" + selectedCustomer.id + "] " + selectedCustomer.last_name + " " + selectedCustomer.first_name + " ?");
+    public async handleSelectedCustomer(selectedCustomer: number): Promise<void> {
 
         let answer: Answers<string> = await Console.showOptions(
             [
@@ -56,7 +65,7 @@ export class Customers {
               "2. Show statistics",
               "3. Make an order"
             ],
-            "What do you want to do with the selected Customer?");
+            "What do you want to do with [" + this.customers[selectedCustomer].id + "] " + this.customers[selectedCustomer].last_name + ", " + this.customers[selectedCustomer].first_name + "?");
       
           //this.handleSelectedArticleAnswer(answer.value);   
     }

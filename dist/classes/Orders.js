@@ -16,7 +16,9 @@ exports.Orders = void 0;
 const Console_1 = __importDefault(require("./singletons/Console"));
 const FileHandler_1 = __importDefault(require("./singletons/FileHandler"));
 class Orders {
-    constructor() { }
+    constructor() {
+        this.orders = FileHandler_1.default.readArrayFile("./../../data/orders.json");
+    }
     showOrderOptions() {
         return __awaiter(this, void 0, void 0, function* () {
             Console_1.default.printLine("Order Page");
@@ -30,19 +32,24 @@ class Orders {
     }
     handleOrderAnswer(answer) {
         return __awaiter(this, void 0, void 0, function* () {
-            let orders = yield FileHandler_1.default.readArrayFile("./../../data/orders.json");
+            let orderArray = [];
             switch (answer) {
                 case 1:
                     let orderSearch = yield Console_1.default.question("Search by ID or customer", "text");
-                    for (let i = 0; i < orders.length; i++) {
-                        if (orders[i].id.includes(orderSearch.value) || orders[i].customer.toString().includes(orderSearch.value)) {
-                            yield Console_1.default.showOptions(["[" + orders[i].id.toString() + "] " + orders[i].customer.toString()], "All found orders: ");
-                            this.handleSelectedOrder(orders[i]);
+                    for (let i = 0; i < this.orders.length; i++) {
+                        if (this.orders[i].id.includes(orderSearch.value) || this.orders[i].order_date.toString().includes(orderSearch.value) || this.orders[i].customer.last_name.toString().includes(orderSearch.value) || this.orders[i].customer.first_name.toString().includes(orderSearch.value)) {
+                            orderArray.push("[" + this.orders[i].id + "] " + this.orders[i].order_date + " - " + this.orders[i].customer.last_name + ", " + this.orders[i].customer.first_name);
                         }
                     }
+                    let foundOrder = yield Console_1.default.showOptions(orderArray, "All found orders: ");
+                    this.handleSelectedOrder(foundOrder.value - 1);
                     break;
                 case 2:
-                    yield Console_1.default.showOptions(["[" + orders.toString() + "] " + orders], "All available orders: ");
+                    for (let i = 0; i < this.orders.length; i++) {
+                        orderArray.push("[" + this.orders[i].id + "] " + this.orders[i].order_date + " - " + this.orders[i].customer.last_name + ", " + this.orders[i].customer.first_name);
+                    }
+                    let selectedOrder = yield Console_1.default.showOptions(orderArray, "All available orders: ");
+                    this.handleSelectedOrder(selectedOrder.value - 1);
                     break;
                 default:
                     Console_1.default.printLine("Option not available!");
@@ -52,11 +59,10 @@ class Orders {
     }
     handleSelectedOrder(selectedOrder) {
         return __awaiter(this, void 0, void 0, function* () {
-            Console_1.default.printLine("What do you want to do with [" + selectedOrder.id + "] " + selectedOrder.customer + " ?");
             let answer = yield Console_1.default.showOptions([
                 "1. Edit order",
                 "2. Show statistics",
-            ], "What do you want to do with the selected Order?");
+            ], "What do you want to do with [" + this.orders[selectedOrder].id + "] " + this.orders[selectedOrder].order_date + " - " + this.orders[selectedOrder].customer.last_name + ", " + this.orders[selectedOrder].customer.first_name);
             //this.handleSelectedArticleAnswer(answer.value);   
         });
     }
