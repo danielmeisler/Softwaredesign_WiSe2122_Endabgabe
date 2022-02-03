@@ -1,18 +1,4 @@
-import * as readline from "readline";
-import Console from "./classes/singletons/Console";
+import Login from "./Login";
 
-export class Main {
-
-  public consoleLine: readline.ReadLine;
-
-  constructor() {
-    this.consoleLine = readline.createInterface({input: process.stdin, output: process.stdout})
-  }
-
-  public showProgramStatus(): void {
-    Console.printLine("test");
-  }
-}
-
-let main: Main = new Main();
-main.showProgramStatus();
+let login: Login = new Login();
+login.showLogin();
