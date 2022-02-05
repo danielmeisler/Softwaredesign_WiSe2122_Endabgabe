@@ -10,7 +10,6 @@ export class Orders {
     public orders: OrderDAO[] = FileHandler.readArrayFile("./../../data/orders.json");
 
     public async showOrderOptions(): Promise<void> {
-        Console.printLine("Order Page");
 
         let answer: Answers<string> = await Console.showOptions(
             [

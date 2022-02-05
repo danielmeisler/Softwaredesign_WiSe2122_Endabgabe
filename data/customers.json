@@ -1,11 +1,1 @@
-[
-  {
-    "id": "KNR123",
-    "last_name": "Mustermann",
-    "first_name": "Max",
-    "street_number_address": "Musterstraße 1",
-    "postal_code": 12345,
-    "city": "Musterstadt",
-    "discount_percentage": 5
-  }
-]
+[{"id":"CNR123","last_name":"Horstus","first_name":"Iltgus","street_number_address":"Bregstreet 8","postal_code":78120,"city":"Fuwa","discount_percentage":4},{"id":"CNR456","last_name":"Reiprich","first_name":"Alex","street_number_address":"Bregstreet","postal_code":32543,"city":"Fuwa","discount_percentage":4},{"id":"CNR411","last_name":"Nauber","first_name":"May","street_number_address":"Marktplatz 15","postal_code":78120,"city":"Furtwangen","discount_percentage":5},{"id":"CNR854","last_name":"Kasper","first_name":"Samuel","street_number_address":"Brestr","postal_code":32342,"city":"zebra","discount_percentage":2}]

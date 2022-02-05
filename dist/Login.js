@@ -19,7 +19,7 @@ const FileHandler_1 = __importDefault(require("./classes/singletons/FileHandler"
 class Login {
     showLogin() {
         return __awaiter(this, void 0, void 0, function* () {
-            Console_1.default.printLine("Login");
+            Console_1.default.printLine("--Login--");
             let usernameQuestion = yield Console_1.default.question("Username: ", "text");
             let passwordQuestion = yield Console_1.default.question("Password: ", "password");
             this.handleUser(usernameQuestion.value, passwordQuestion.value);
@@ -29,7 +29,7 @@ class Login {
         return __awaiter(this, void 0, void 0, function* () {
             let users = yield FileHandler_1.default.readArrayFile("./../../data/users.json");
             let succes = false;
-            let currentUser = users[0];
+            let currentUser = {};
             for (let i = 0; i < users.length; i++) {
                 if (users[i].username == username && users[i].password == password) {
                     currentUser = users[i];
@@ -37,12 +37,12 @@ class Login {
                 }
             }
             if (succes == true) {
-                Console_1.default.printLine("You have successfully logged in!");
+                Console_1.default.printLine("--You have successfully logged in!--");
                 let app = new App_1.default();
                 app.showHome(currentUser);
             }
             else {
-                Console_1.default.printLine("Your login was incorrect, please try again!");
+                Console_1.default.printLine("--Your login was incorrect, please try again!--");
                 this.showLogin();
             }
         });

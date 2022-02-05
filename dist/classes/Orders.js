@@ -21,7 +21,6 @@ class Orders {
     }
     showOrderOptions() {
         return __awaiter(this, void 0, void 0, function* () {
-            Console_1.default.printLine("Order Page");
             let answer = yield Console_1.default.showOptions([
                 "1. Search an order",
                 "2. Show list of orders",

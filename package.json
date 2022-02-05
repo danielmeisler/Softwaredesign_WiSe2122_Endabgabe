@@ -31,6 +31,7 @@
   },
   "devDependencies": {
     "@types/node": "^17.0.10",
-    "@types/prompts": "^2.0.14"
+    "@types/prompts": "^2.0.14",
+    "@types/uuid": "^8.3.4"
   }
 }

@@ -1,12 +1,1 @@
-[
-  {
-    "username": "danielmeisler",
-    "password": "daniel123",
-    "admin": true
-  },
-  {
-    "username": "user",
-    "password": "user123",
-    "admin": false
-  }
-]
+[{"username":"danielmeisler","password":"daniel123","admin":true},{"username":"user","password":"user123","admin":false},{"username":"may","password":"may123","admin":false}]

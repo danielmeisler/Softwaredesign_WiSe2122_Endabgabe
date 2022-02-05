@@ -31,6 +31,12 @@ export class FileHandler {
     public writeFile(pathToFile: string, dataToWrite: any) : void {
         fs.writeFileSync(path.resolve(__dirname, "../" + pathToFile), JSON.stringify(dataToWrite));
     }
+
+    public deleteFile(pathToFile: string, position: number) : void {
+        let json: any[] = this.readFile(pathToFile);
+        json.splice(position, 1);
+        fs.writeFileSync(path.resolve(__dirname, "../" + pathToFile), JSON.stringify(json));
+      }
 }
 
 export default FileHandler.getInstance();

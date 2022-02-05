@@ -21,7 +21,6 @@ class Users {
     }
     showUserOptions() {
         return __awaiter(this, void 0, void 0, function* () {
-            Console_1.default.printLine("User Page");
             let answer = yield Console_1.default.showOptions([
                 "1. Search an user",
                 "2. Show list of users",
@@ -51,8 +50,10 @@ class Users {
                     let selectedUser = yield Console_1.default.showOptions(userArray, "All available users: ");
                     this.handleSelectedUser(selectedUser.value - 1);
                     break;
+                case 3:
+                    this.createNewUser();
+                    break;
                 default:
-                    Console_1.default.printLine("Option not available!");
                     break;
             }
         });
@@ -60,11 +61,69 @@ class Users {
     handleSelectedUser(selectedUser) {
         return __awaiter(this, void 0, void 0, function* () {
             let answer = yield Console_1.default.showOptions([
-                "1. Edit username",
-                "2. Edit password",
-                "3. Edit admin rights"
+                "1. Edit user",
+                "2. Delete user"
             ], "What do you want to do with " + this.users[selectedUser].username + "?");
-            //this.handleSelecteduserAnswer(answer.value);   
+            switch (answer.value) {
+                case 1:
+                    this.editUser(selectedUser);
+                    break;
+                case 2:
+                    if (selectedUser < 0) {
+                        FileHandler_1.default.deleteFile("./../../data/users.json", selectedUser);
+                    }
+                    else {
+                        Console_1.default.printLine("Sorry, you can not delete the super admin.");
+                    }
+                    break;
+                default:
+                    break;
+            }
+        });
+    }
+    createNewUser() {
+        return __awaiter(this, void 0, void 0, function* () {
+            Console_1.default.printLine("--Please follow the steps to create a new user--");
+            let allUsers = this.users;
+            let newUser = {};
+            let usernameQuestion = yield Console_1.default.question("Username: ", "text");
+            if ((yield this.checkExistence(usernameQuestion.value)) == true) {
+                newUser.username = usernameQuestion.value;
+            }
+            else {
+                Console_1.default.printLine("--This username already exists, please try another.--");
+                this.createNewUser();
+            }
+            let passwordQuestion = yield Console_1.default.question("Password: ", "text");
+            newUser.password = passwordQuestion.value;
+            let adminQuestion = yield Console_1.default.question("Admin rights: ", "toggle");
+            newUser.admin = adminQuestion.value;
+            allUsers.push(newUser);
+            FileHandler_1.default.writeFile("./../../data/users.json", allUsers);
+        });
+    }
+    editUser(selectedUser) {
+        return __awaiter(this, void 0, void 0, function* () {
+            Console_1.default.printLine("--Please follow the steps to edit the user--");
+            let allUsers = this.users;
+            let usernameQuestion = yield Console_1.default.question("Change username '" + allUsers[selectedUser].username + "' to:", "text");
+            if ((yield this.checkExistence(usernameQuestion.value)) == true) {
+                allUsers[selectedUser].username = usernameQuestion.value;
+            }
+            else {
+                Console_1.default.printLine("--This username already exists, please try another.--");
+                this.editUser(selectedUser);
+            }
+            let passwordQuestion = yield Console_1.default.question("Change password: ", "password");
+            allUsers[selectedUser].password = passwordQuestion.value;
+            let adminQuestion = yield Console_1.default.question("Change admin right from '" + allUsers[selectedUser].admin + "' to: ", "toggle");
+            allUsers[selectedUser].admin = adminQuestion.value;
+            FileHandler_1.default.writeFile("./../../data/users.json", allUsers);
+        });
+    }
+    checkExistence(user) {
+        return __awaiter(this, void 0, void 0, function* () {
+            return true;
         });
     }
 }

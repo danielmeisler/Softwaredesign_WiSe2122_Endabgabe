@@ -11,7 +11,7 @@ export class App {
     constructor() {}
 
     public async showHome(currentUser: UserDAO): Promise<void> {
-        Console.printLine("Homepage: Welcome " + currentUser.username + "!");
+        Console.printLine("--Homepage: Welcome " + currentUser.username + "!--");
 
         if (currentUser.admin == true) {
             let answer: Answers<string> = await Console.showOptions(
@@ -55,7 +55,6 @@ export class App {
                 users.showUserOptions();
                 break;
             default:
-                Console.printLine("Option not available!");
                 break;
         }
     }

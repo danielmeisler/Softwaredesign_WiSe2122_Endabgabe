@@ -22,7 +22,7 @@ class App {
     constructor() { }
     showHome(currentUser) {
         return __awaiter(this, void 0, void 0, function* () {
-            Console_1.default.printLine("Homepage: Welcome " + currentUser.username + "!");
+            Console_1.default.printLine("--Homepage: Welcome " + currentUser.username + "!--");
             if (currentUser.admin == true) {
                 let answer = yield Console_1.default.showOptions([
                     "1. Articles",
@@ -62,7 +62,6 @@ class App {
                     users.showUserOptions();
                     break;
                 default:
-                    Console_1.default.printLine("Option not available!");
                     break;
             }
         });

@@ -10,7 +10,6 @@ export class Articles {
     public articles: ArticleDAO[] = FileHandler.readArrayFile("./../../data/articles.json");
 
     public async showArticleOptions(): Promise<void> {
-        Console.printLine("Article Page");
 
         let answer: Answers<string> = await Console.showOptions(
             [
@@ -52,7 +51,6 @@ export class Articles {
 
                 break;
             default:
-                Console.printLine("Option not available!");
                 break;
         }
     }

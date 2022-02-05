@@ -21,7 +21,6 @@ class Articles {
     }
     showArticleOptions() {
         return __awaiter(this, void 0, void 0, function* () {
-            Console_1.default.printLine("Article Page");
             let answer = yield Console_1.default.showOptions([
                 "1. Search an article",
                 "2. Show list of articles"
@@ -51,7 +50,6 @@ class Articles {
                     this.handleSelectedArticle(selectedArticle.value - 1);
                     break;
                 default:
-                    Console_1.default.printLine("Option not available!");
                     break;
             }
         });

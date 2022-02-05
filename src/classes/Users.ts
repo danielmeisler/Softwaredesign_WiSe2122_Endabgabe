@@ -10,7 +10,6 @@ export class Users {
     public users: UserDAO[] = FileHandler.readArrayFile("./../../data/users.json");
 
     public async showUserOptions(): Promise<void> {
-        Console.printLine("User Page");
 
         let answer: Answers<string> = await Console.showOptions(
             [
@@ -52,8 +51,12 @@ export class Users {
                 this.handleSelectedUser(selectedUser.value - 1);
                 
                 break;
+            case 3:
+
+                this.createNewUser();
+
+                break;
             default:
-                Console.printLine("Option not available!");
                 break;
         }
     }
@@ -62,12 +65,76 @@ export class Users {
 
         let answer: Answers<string> = await Console.showOptions(
             [
-              "1. Edit username",
-              "2. Edit password",
-              "3. Edit admin rights"
+              "1. Edit user",
+              "2. Delete user"
             ],
             "What do you want to do with " + this.users[selectedUser].username + "?");
       
-          //this.handleSelecteduserAnswer(answer.value);   
+            switch (answer.value) {
+                case 1:
+                    this.editUser(selectedUser);
+                    break;
+                case 2:
+                    if (selectedUser < 0) {
+                        FileHandler.deleteFile("./../../data/users.json", selectedUser);
+                    } else {
+                        Console.printLine("Sorry, you can not delete the super admin.")
+                    }
+                    break;
+                default:
+                    break;
+            }
+    }
+
+    public async createNewUser(): Promise<void> {
+        Console.printLine("--Please follow the steps to create a new user--");
+        let allUsers: UserDAO[] = this.users;
+        let newUser: UserDAO = {} as UserDAO;
+
+        let usernameQuestion: Answers<string> = await Console.question("Username: ", "text");
+        if (await this.checkExistence(usernameQuestion.value) == true) {
+            newUser.username = usernameQuestion.value;
+        } else {
+            Console.printLine("--This username already exists, please try another.--");
+            this.createNewUser();
+        }
+
+        let passwordQuestion: Answers<string> = await Console.question("Password: ", "text");
+        newUser.password = passwordQuestion.value;
+
+        let adminQuestion: Answers<string> = await Console.question("Admin rights: ", "toggle");
+        newUser.admin = adminQuestion.value;
+
+        allUsers.push(newUser);
+
+        FileHandler.writeFile("./../../data/users.json", allUsers);
+    }
+
+    public async editUser(selectedUser: number): Promise<void> {
+        Console.printLine("--Please follow the steps to edit the user--");
+        let allUsers: UserDAO[] = this.users;
+
+        let usernameQuestion: Answers<string> = await Console.question("Change username '"+ allUsers[selectedUser].username +"' to:", "text");
+        if (await this.checkExistence(usernameQuestion.value) == true) {
+            allUsers[selectedUser].username = usernameQuestion.value;
+        } else {
+            Console.printLine("--This username already exists, please try another.--");
+            this.editUser(selectedUser);
+        }
+
+        let passwordQuestion: Answers<string> = await Console.question("Change password: ", "password");
+        allUsers[selectedUser].password = passwordQuestion.value;
+
+        let adminQuestion: Answers<string> = await Console.question("Change admin right from '" + allUsers[selectedUser].admin + "' to: ", "toggle");
+        allUsers[selectedUser].admin = adminQuestion.value;
+
+        FileHandler.writeFile("./../../data/users.json", allUsers);
+    }
+
+    public async checkExistence(user: string): Promise<boolean> {
+
+
+
+        return true;
     }
 }
