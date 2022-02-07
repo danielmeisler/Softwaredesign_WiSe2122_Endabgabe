@@ -42,7 +42,7 @@ export class Users {
 
                 break;
             case 2:
-
+                
                 for (let i: number = 0; i < this.users.length; i++) {
                     userArray.push(this.users[i].username.toString());
                 }
@@ -75,10 +75,11 @@ export class Users {
                     this.editUser(selectedUser);
                     break;
                 case 2:
-                    if (selectedUser < 0) {
+                    if (selectedUser > 0) {
                         FileHandler.deleteFile("./../../data/users.json", selectedUser);
+                        Console.printLine("--User succesfully deleted--")
                     } else {
-                        Console.printLine("Sorry, you can not delete the super admin.")
+                        Console.printLine("--Sorry, you can not delete the super admin--")
                     }
                     break;
                 default:
@@ -91,15 +92,15 @@ export class Users {
         let allUsers: UserDAO[] = this.users;
         let newUser: UserDAO = {} as UserDAO;
 
-        let usernameQuestion: Answers<string> = await Console.question("Username: ", "text");
-        if (await this.checkExistence(usernameQuestion.value) == true) {
+        let usernameQuestion: Answers<string> = await Console.question("Username (only letters and numbers): ", "text");
+        if (this.checkExistenceAndCharacters(usernameQuestion.value) == true) {
             newUser.username = usernameQuestion.value;
         } else {
-            Console.printLine("--This username already exists, please try another.--");
-            this.createNewUser();
+            this.showUserOptions();
+            return;
         }
 
-        let passwordQuestion: Answers<string> = await Console.question("Password: ", "text");
+        let passwordQuestion: Answers<string> = await Console.question("Password: ", "password");
         newUser.password = passwordQuestion.value;
 
         let adminQuestion: Answers<string> = await Console.question("Admin rights: ", "toggle");
@@ -115,11 +116,12 @@ export class Users {
         let allUsers: UserDAO[] = this.users;
 
         let usernameQuestion: Answers<string> = await Console.question("Change username '"+ allUsers[selectedUser].username +"' to:", "text");
-        if (await this.checkExistence(usernameQuestion.value) == true) {
+
+        if (this.checkExistenceAndCharacters(usernameQuestion.value) == true) {
             allUsers[selectedUser].username = usernameQuestion.value;
         } else {
-            Console.printLine("--This username already exists, please try another.--");
-            this.editUser(selectedUser);
+            this.handleSelectedUser(selectedUser);
+            return;
         }
 
         let passwordQuestion: Answers<string> = await Console.question("Change password: ", "password");
@@ -131,10 +133,30 @@ export class Users {
         FileHandler.writeFile("./../../data/users.json", allUsers);
     }
 
-    public async checkExistence(user: string): Promise<boolean> {
+    public checkExistenceAndCharacters(user: string): boolean {
+        let regexp: RegExp = new RegExp('^[a-zA-Z0-9_.-]*$');     
+        let exists: Boolean = false;
 
+        if (regexp.test(user) == true) {
 
+            for (let i: number = 0; i < this.users.length; i++) {
+                if ( this.users[i].username == user) {
+                    exists = true;
+                }
+            }
 
-        return true;
+            if (exists == true) {
+                Console.printLine("--The username is already taken!--")
+                return false;
+            } else {
+                Console.printLine("--The username is available!--")
+                return true;
+            }
+
+        } else {
+            Console.printLine("--The username contains unallowed characters. Try again!--")
+            return false;
+        }
     }
+
 }

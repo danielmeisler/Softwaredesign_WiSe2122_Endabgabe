@@ -51,7 +51,8 @@ export class Customers {
                 this.handleSelectedCustomer(selectedCustomer.value - 1);
                 break;
             case 3:
-                this.createNewCustomer();   
+                this.createNewCustomer();
+                break;
             default:
                 break;
         }
@@ -74,6 +75,7 @@ export class Customers {
                 break;
             case 2:
                 FileHandler.deleteFile("./../../data/customers.json", selectedCustomer);
+                Console.printLine("--Customer succesfully deleted--")
                 break;
             case 3:
                 
@@ -92,11 +94,17 @@ export class Customers {
         let newCustomer: CustomerDAO = {} as CustomerDAO;
 
         let idTemplate: string = "CNR";
+        let fullID: string;
         let idQuestion: Answers<string> = await Console.question("Pick three numbers for the id: ", "number");
-        let fullID: string = idTemplate + idQuestion.value;
         
-        newCustomer.id = fullID;
-
+        if (this.checkExistenceAndCharacters(idQuestion.value) == true) {
+            fullID  = idTemplate + idQuestion.value;
+            newCustomer.id = fullID;
+        } else {
+            this.showCustomerOptions();
+            return;
+        }
+        
         let lastNameQuestion: Answers<string> = await Console.question("Last Name: ", "text");
         newCustomer.last_name = lastNameQuestion.value;
 
@@ -125,10 +133,16 @@ export class Customers {
         let allCustomers: CustomerDAO[] = this.customers;
 
         let idTemplate: string = "CNR";
+        let fullID: string;
         let idQuestion: Answers<string> = await Console.question("Pick three new numbers to replace '" + allCustomers[selectedCustomer].id + "': ", "number");
-        let fullID: string = idTemplate + idQuestion.value;
 
-        allCustomers[selectedCustomer].id = fullID;
+        if (this.checkExistenceAndCharacters(idQuestion.value) == true) {
+            fullID  = idTemplate + idQuestion.value;
+            allCustomers[selectedCustomer].id = fullID;
+        } else {
+            this.handleSelectedCustomer(selectedCustomer);
+            return;
+        }
 
         let lastNameQuestion: Answers<string> = await Console.question("Replace Last Name '" + allCustomers[selectedCustomer].last_name + "': ", "text");
         allCustomers[selectedCustomer].last_name = lastNameQuestion.value;
@@ -151,5 +165,29 @@ export class Customers {
         FileHandler.writeFile("./../../data/customers.json", allCustomers);
     }
 
+    public checkExistenceAndCharacters(id: string): boolean {
+        let regexp: RegExp = new RegExp('^[0-9]{3}$');
+        let exists: Boolean = false;
 
+        if (regexp.test(id) == true) {
+
+            for (let i: number = 0; i < this.customers.length; i++) {
+                if ( this.customers[i].id == "CNR" + id) {
+                    exists = true;
+                }
+            }
+
+            if (exists == true) {
+                Console.printLine("--The ID is already taken!--")
+                return false;
+            } else {
+                Console.printLine("--The ID is available!--")
+                return true;
+            }
+
+        } else {
+            Console.printLine("--The ID contains unallowed characters. Try again!--")
+            return false;
+        }
+    }
 }

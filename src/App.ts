@@ -12,9 +12,10 @@ export class App {
 
     public async showHome(currentUser: UserDAO): Promise<void> {
         Console.printLine("--Homepage: Welcome " + currentUser.username + "!--");
+        let answer: Answers<string>;
 
         if (currentUser.admin == true) {
-            let answer: Answers<string> = await Console.showOptions(
+            answer = await Console.showOptions(
                 [
                   "1. Articles",
                   "2. Customers",
@@ -22,25 +23,23 @@ export class App {
                   "4. [ADMIN] Users"
                 ],
                 "Which section do you want to edit?");
-
-                this.handleAnswer(answer.value);
         } else {
-            let answer: Answers<string> = await Console.showOptions(
+            answer = await Console.showOptions(
                 [
                   "1. Articles",
                   "2. Customers",
                   "3. Orders"
                 ],
                 "Which section do you want to edit?");
-                this.handleAnswer(answer.value);
         }
+        this.handleAnswer(answer.value, currentUser);
     }
 
-    public async handleAnswer(answer: number): Promise<void> {
+    public async handleAnswer(answer: number, currentUser: UserDAO): Promise<void> {
         switch (answer) {
             case 1:
                 let articles: Articles = new Articles();
-                articles.showArticleOptions();
+                articles.showArticleOptions(currentUser);
                 break;
             case 2:
                 let customers: Customers = new Customers();
