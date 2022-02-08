@@ -1,5 +1,7 @@
 import { Answers } from 'prompts';
 import { CustomerDAO } from './dao/customerDao';
+import { CustomerStatsDAO } from './dao/statisticDao';
+import { Statistics } from './Statistics';
 import Console from './singletons/Console';
 import FileHandler from './singletons/FileHandler';
 
@@ -8,6 +10,7 @@ export class Customers {
     constructor() {}
 
     public customers: CustomerDAO[] = FileHandler.readArrayFile("./../../data/customers.json");
+    public customerStats: CustomerStatsDAO[] = FileHandler.readArrayFile("./../../data/customersStatistics.json");
 
     public async showCustomerOptions(): Promise<void> {
 
@@ -75,10 +78,12 @@ export class Customers {
                 break;
             case 2:
                 FileHandler.deleteFile("./../../data/customers.json", selectedCustomer);
+                FileHandler.deleteFile("./../../data/customersStatistics.json", selectedCustomer);
                 Console.printLine("--Customer succesfully deleted--")
                 break;
             case 3:
-                
+                let statistics: Statistics = new Statistics();
+                statistics.showCustomerStatistics(selectedCustomer);
                 break;
             case 4:
 
@@ -92,6 +97,8 @@ export class Customers {
         Console.printLine("--Please follow the steps to create a new customer--");
         let allCustomers: CustomerDAO[] = this.customers;
         let newCustomer: CustomerDAO = {} as CustomerDAO;
+        let stats: CustomerStatsDAO[] = this.customerStats;
+        let newStat: CustomerStatsDAO = {} as CustomerStatsDAO;
 
         let idTemplate: string = "CNR";
         let fullID: string;
@@ -124,13 +131,17 @@ export class Customers {
         newCustomer.discount_percentage = discountPercentageQuestion.value;
 
         allCustomers.push(newCustomer);
-
         FileHandler.writeFile("./../../data/customers.json", allCustomers);
+
+        newStat.customer = newCustomer; 
+        stats.push(newStat);
+        FileHandler.writeFile("./../../data/customersStatistics.json", stats);
     }
 
     public async editCustomer(selectedCustomer: number): Promise<void> {
         Console.printLine("--Please follow the steps to edit the customer--");
         let allCustomers: CustomerDAO[] = this.customers;
+        let stats: CustomerStatsDAO[] = this.customerStats;
 
         let idTemplate: string = "CNR";
         let fullID: string;
@@ -163,6 +174,9 @@ export class Customers {
         allCustomers[selectedCustomer].discount_percentage = discountPercentageQuestion.value;
 
         FileHandler.writeFile("./../../data/customers.json", allCustomers);
+
+        stats[selectedCustomer].customer = allCustomers[selectedCustomer]; 
+        FileHandler.writeFile("./../../data/customersStatistics.json", stats);
     }
 
     public checkExistenceAndCharacters(id: string): boolean {

@@ -3,7 +3,7 @@ export interface CustomerDAO {
     last_name: String,
     first_name: String,
     street_number_address: String,
-    postal_code: Number, 
+    postal_code: number, 
     city: String,
-    discount_percentage: Number
+    discount_percentage: number
 }

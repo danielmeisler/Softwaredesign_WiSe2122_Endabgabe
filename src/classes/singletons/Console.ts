@@ -18,6 +18,7 @@ class Console {
     public question(_question: string, _type: PromptType): Promise<Answers<string>> {
         return prompts({
             type: _type,
+            mask: "DD-MM-YYYY",
             name: 'value',
             message: _question
         });

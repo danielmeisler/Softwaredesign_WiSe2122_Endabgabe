@@ -1,6 +1,8 @@
 import { Answers } from 'prompts';
 import { ArticleDAO } from './dao/articleDao';
+import { ArticleStatsDAO } from './dao/statisticDao';
 import { UserDAO } from './dao/userDao';
+import { Statistics } from './Statistics';
 import Console from './singletons/Console';
 import FileHandler from './singletons/FileHandler';
 
@@ -9,6 +11,7 @@ export class Articles {
     constructor() {}
 
     public articles: ArticleDAO[] = FileHandler.readArrayFile("./../../data/articles.json");
+    public articleStats: ArticleStatsDAO[] = FileHandler.readArrayFile("./../../data/articlesStatistics.json");
 
     public async showArticleOptions(currentUser: UserDAO): Promise<void> {
         let answer: Answers<string>;
@@ -96,13 +99,15 @@ export class Articles {
                 this.editArticle(selectedArticle, currentUser);
                 break;
             case 2:
-                
+                let statistics: Statistics = new Statistics();
+                statistics.showArticleStatistics(selectedArticle);
                 break;
             case 3:
                 
                 break;
             case 4:
                 FileHandler.deleteFile("./../../data/articles.json", selectedArticle);
+                FileHandler.deleteFile("./../../data/articlesStatistics.json", selectedArticle);
                 Console.printLine("--Article succesfully deleted--")
                 break;
             default:
@@ -115,6 +120,8 @@ export class Articles {
         Console.printLine("--Please follow the steps to create a new article--");
         let allArticles: ArticleDAO[] = this.articles;
         let newArticle: ArticleDAO = {} as ArticleDAO;
+        let stats: ArticleStatsDAO[] = this.articleStats;
+        let newStat: ArticleStatsDAO = {} as ArticleStatsDAO;
 
         let idTemplate: string = "ABC";
         let fullID: string;
@@ -153,13 +160,17 @@ export class Articles {
         newArticle.discount_percentage = discountPercentageQuestion.value;
 
         allArticles.push(newArticle);
-
         FileHandler.writeFile("./../../data/articles.json", allArticles);
+
+        newStat.article = newArticle; 
+        stats.push(newStat);
+        FileHandler.writeFile("./../../data/articlesStatistics.json", stats);
     }
 
     public async editArticle(selectedArticle: number, currentUser: UserDAO): Promise<void> {
         Console.printLine("--Please follow the steps to edit the article--");
         let allArticles: ArticleDAO[] = this.articles;
+        let stats: ArticleStatsDAO[] = this.articleStats;
 
         let idTemplate: string = "ABC";
         let fullID: string;
@@ -198,6 +209,9 @@ export class Articles {
         allArticles[selectedArticle].discount_percentage = discountPercentageQuestion.value;
 
         FileHandler.writeFile("./../../data/articles.json", allArticles);
+
+        stats[selectedArticle].article = allArticles[selectedArticle]; 
+        FileHandler.writeFile("./../../data/articlesStatistics.json", stats);
     }
 
     public checkExistenceAndCharacters(id: string): boolean {
