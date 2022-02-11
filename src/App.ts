@@ -1,16 +1,18 @@
+import Console from "./classes/singletons/Console";
 import { Answers } from 'prompts';
 import { Articles } from './classes/Articles';
 import { Customers } from './classes/Customers';
-import { UserDAO } from './classes/dao/userDao';
 import { Orders } from './classes/Orders';
 import { Users } from './classes/Users';
-import Console from "./classes/singletons/Console";
+import { currentUser } from './Login';
+
+// main menu of this app
 
 export class App {
 
     constructor() {}
 
-    public async showHome(currentUser: UserDAO): Promise<void> {
+    public async showHome(): Promise<void> {
         Console.printLine("--Homepage: Welcome " + currentUser.username + "!--");
         let answer: Answers<string>;
 
@@ -32,14 +34,14 @@ export class App {
                 ],
                 "Which section do you want to edit?");
         }
-        this.handleAnswer(answer.value, currentUser);
+        this.handleAnswer(answer.value);
     }
 
-    public async handleAnswer(answer: number, currentUser: UserDAO): Promise<void> {
+    public async handleAnswer(answer: number): Promise<void> {
         switch (answer) {
             case 1:
                 let articles: Articles = new Articles();
-                articles.showArticleOptions(currentUser);
+                articles.showArticleOptions();
                 break;
             case 2:
                 let customers: Customers = new Customers();
@@ -54,9 +56,11 @@ export class App {
                 users.showUserOptions();
                 break;
             default:
+                Console.printLine("Option not available!");
                 break;
         }
     }
+    
 }
 
 export default App;

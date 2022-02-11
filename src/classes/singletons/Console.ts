@@ -30,11 +30,12 @@ class Console {
         for (let i: number = 1; i <= _options.length; i++) {
           choices.push({ title: _options[i - 1], value: i });
         }
+        
         return prompts({
             type: 'select',
             name: 'value',
             message: _question,
-            choices: choices
+            choices: choices,
         });
     }
 

@@ -1,10 +1,12 @@
+import Console from './singletons/Console';
+import FileHandler from './singletons/FileHandler';
 import { Answers } from 'prompts';
 import { ArticleDAO } from './dao/articleDao';
 import { ArticleStatsDAO } from './dao/statisticDao';
-import { UserDAO } from './dao/userDao';
 import { Statistics } from './Statistics';
-import Console from './singletons/Console';
-import FileHandler from './singletons/FileHandler';
+import { Orders } from './Orders';
+import { currentUser } from '../Login';
+import { App } from '../App';
 
 export class Articles {
     
@@ -13,110 +15,139 @@ export class Articles {
     public articles: ArticleDAO[] = FileHandler.readArrayFile("./../../data/articles.json");
     public articleStats: ArticleStatsDAO[] = FileHandler.readArrayFile("./../../data/articlesStatistics.json");
 
-    public async showArticleOptions(currentUser: UserDAO): Promise<void> {
+    // shows article menu
+
+    public async showArticleOptions(): Promise<void> {
         let answer: Answers<string>;
 
         if (currentUser.admin == true) {
             answer = await Console.showOptions(
                 [
-                    "1. Search an article",
-                    "2. Show list of articles",
-                    "3. [ADMIN] Create a new article."
+                    "1. [<-] Go back",
+                    "2. Search an article",
+                    "3. Show list of articles",
+                    "4. [ADMIN] Create a new article."
                 ],
                 "Articles: What do you want to do?");
         } else {
             answer = await Console.showOptions(
                 [
-                    "1. Search an article",
-                    "2. Show list of articles"
+                    "1. [<-] Go back",
+                    "2. Search an article",
+                    "3. Show list of articles"
                 ],
                 "Articles: What do you want to do?");
-          
         }
-        this.handleArticleAnswer(answer.value, currentUser);
+        this.handleArticleAnswer(answer.value);
     }
 
-    public async handleArticleAnswer(answer: number, currentUser: UserDAO): Promise<void> {
+    // processes the input and lets you search for an article or create one
 
+    public async handleArticleAnswer(answer: number): Promise<void> {
         let articleArray: string[] = [];
 
         switch (answer) {
             case 1:
+                let app: App = new App();
+                app.showHome();
+                break;
 
+            case 2:
+                this.articles = FileHandler.readArrayFile("./../../data/articles.json");
                 let articleSearch: Answers<string> = await Console.question("Search by ID or description", "text");
-
                 for (let i: number = 0; i < this.articles.length; i++) {
                     if (this.articles[i].id.includes(articleSearch.value) || this.articles[i].description.includes(articleSearch.value)) {
                         articleArray.push("["+ this.articles[i].id + "] " + this.articles[i].description);
+                    } else {
+                        Console.printLine("--Sorry, your input was not found. Please try again--")
+                        this.showArticleOptions();
+                        return;
                     }
                 }
-
                 let foundArticle: Answers<string> = await Console.showOptions(articleArray,"All found articles: ");
-                this.handleSelectedArticle(foundArticle.value - 1, currentUser);
-
+                this.handleSelectedArticle(foundArticle.value - 1);
                 break;
-            case 2:
 
+            case 3:
                 for (let i: number = 0; i < this.articles.length; i++) {
                     articleArray.push("["+ this.articles[i].id + "] " + this.articles[i].description);
                 }
-
                 let selectedArticle: Answers<string> = await Console.showOptions(articleArray,"All available articles: ");
-                this.handleSelectedArticle(selectedArticle.value - 1, currentUser);
+                this.handleSelectedArticle(selectedArticle.value - 1);
                 break;
-            case 3:
-                this.createNewArticle(currentUser);
+
+            case 4:
+                this.createNewArticle();
                 break;
+
             default:
+                Console.printLine("Option not available!");
                 break;
         }
+
     }
 
-    public async handleSelectedArticle(selectedArticle: number, currentUser: UserDAO): Promise<void> {
+    // if you search or display the articles you can edit, look up the statistics or make an order. As an admin you can even delete the article.
+
+    public async handleSelectedArticle(selectedArticle: number): Promise<void> {
         let answer: Answers<string>;
 
         if (currentUser.admin == true) { 
             answer = await Console.showOptions(
                 [
-                  "1. Edit article",
-                  "2. Show statistics",
-                  "3. Make an order",
-                  "4. [ADMIN] Delete article."
+                    "1. [<-] Go back",
+                    "2. Edit article",
+                    "3. Show statistics",
+                    "4. Make an order",
+                    "5. [ADMIN] Delete article."
                 ],
                 "What do you want to do with [" + this.articles[selectedArticle].id + "] " + this.articles[selectedArticle].description + "?");
         } else {
             answer = await Console.showOptions(
                 [
-                  "1. Edit article",
-                  "2. Show statistics",
-                  "3. Make an order"
+                    "1. [<-] Go back",
+                    "2. Edit article",
+                    "3. Show statistics",
+                    "4. Make an order"
                 ],
                 "What do you want to do with [" + this.articles[selectedArticle].id + "] " + this.articles[selectedArticle].description + "?");
         }
         
         switch (answer.value) {
             case 1:
-                this.editArticle(selectedArticle, currentUser);
+                this.showArticleOptions();
                 break;
+
             case 2:
+                this.editArticle(selectedArticle);
+                break;
+
+            case 3:
                 let statistics: Statistics = new Statistics();
                 statistics.showArticleStatistics(selectedArticle);
                 break;
-            case 3:
-                
-                break;
+
             case 4:
+                let order: Orders = new Orders();
+                order.showOrderOptions();
+                break;
+
+            case 5:
                 FileHandler.deleteFile("./../../data/articles.json", selectedArticle);
                 FileHandler.deleteFile("./../../data/articlesStatistics.json", selectedArticle);
-                Console.printLine("--Article succesfully deleted--")
+                Console.printLine("--Article succesfully deleted--");
+                this.showArticleOptions();
                 break;
+
             default:
+                Console.printLine("Option not available!");
                 break;
         }
-
     }
 
-    public async createNewArticle(currentUser: UserDAO): Promise<void> {
+    // creates an article and asks you every needed information to put it in a json
+
+    public async createNewArticle(): Promise<void> {
         Console.printLine("--Please follow the steps to create a new article--");
         let allArticles: ArticleDAO[] = this.articles;
         let newArticle: ArticleDAO = {} as ArticleDAO;
@@ -131,7 +162,7 @@ export class Articles {
             fullID  = idTemplate + idQuestion.value;
             newArticle.id = fullID;
         } else {
-            this.showArticleOptions(currentUser);
+            this.showArticleOptions();
             return;
         }
 
@@ -165,9 +196,14 @@ export class Articles {
         newStat.article = newArticle; 
         stats.push(newStat);
         FileHandler.writeFile("./../../data/articlesStatistics.json", stats);
+        
+        Console.printLine("--Your article has been created.")
+        this.showArticleOptions();
     }
 
-    public async editArticle(selectedArticle: number, currentUser: UserDAO): Promise<void> {
+    // lets you edit an article and replaces the old with the new information in the json
+
+    public async editArticle(selectedArticle: number): Promise<void> {
         Console.printLine("--Please follow the steps to edit the article--");
         let allArticles: ArticleDAO[] = this.articles;
         let stats: ArticleStatsDAO[] = this.articleStats;
@@ -180,7 +216,7 @@ export class Articles {
             fullID  = idTemplate + idQuestion.value;
             allArticles[selectedArticle].id = fullID;
         } else {
-            this.handleSelectedArticle(selectedArticle, currentUser);
+            this.handleSelectedArticle(selectedArticle);
             return;
         }
 
@@ -212,7 +248,12 @@ export class Articles {
 
         stats[selectedArticle].article = allArticles[selectedArticle]; 
         FileHandler.writeFile("./../../data/articlesStatistics.json", stats);
+
+        Console.printLine("--Your article has been edited.")
+        this.showArticleOptions();
     }
+
+    // checks if the new id is already in use or allowed with only three numbers
 
     public checkExistenceAndCharacters(id: string): boolean {
         let regexp: RegExp = new RegExp('^[0-9]{3}$');
@@ -233,10 +274,12 @@ export class Articles {
                 Console.printLine("--The ID is available!--")
                 return true;
             }
-
+        
         } else {
             Console.printLine("--The ID contains unallowed characters. Try again!--")
             return false;
         }
+
     }
+
 }
