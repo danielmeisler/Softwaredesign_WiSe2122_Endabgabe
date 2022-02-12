@@ -21,6 +21,7 @@
   "dependencies": {
     "@types/jest": "^27.0.2",
     "@types/node": "^16.11.7",
+    "jest": "^27.5.1",
     "prompts": "^2.4.2",
     "ts-jest": "^27.0.7",
     "ts-loader": "^9.2.6",
@@ -31,7 +32,6 @@
   "devDependencies": {
     "@types/node": "^17.0.10",
     "@types/prompts": "^2.0.14",
-    "@types/uuid": "^8.3.4",
-    "jest": "^27.5.1"
+    "@types/uuid": "^8.3.4"
   }
 }
