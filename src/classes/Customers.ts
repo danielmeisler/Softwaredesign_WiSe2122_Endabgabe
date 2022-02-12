@@ -76,7 +76,7 @@ export class Customers {
 
     }
 
-   // if you search or display the customers you can edit, delete, look up the statistics or make an order.
+   // if you search or display the customers you can edit, delete, look up the statistics or make an order
 
     public async handleSelectedCustomer(selectedCustomer: number): Promise<void> {
 
