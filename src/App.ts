@@ -1,4 +1,4 @@
-import Console from "./classes/singletons/Console";
+import Console from './classes/singletons/Console';
 import { Answers } from 'prompts';
 import { Articles } from './classes/Articles';
 import { Customers } from './classes/Customers';
