@@ -1,17 +1,17 @@
 # Softwaredesign_Endabgabe
 
-Install everything: "npm install"
-Run the app: "npm run start"
-Unit Test: "npm test"
+Install everything: "npm install" <br />
+Run the app: "npm run start" <br />
+Unit Test: "npm test" <br /> <br />
 
 To login:
 
-admin:
-danielmeisler
-daniel123
+admin: <br />
+danielmeisler <br />
+daniel123 <br />
 
-user:
-may
-may123
+user: <br />
+may <br />
+may123 <br /> <br />
 
 The UML-Diagrams are in the diagrams folder.
